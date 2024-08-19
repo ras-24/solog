@@ -13,13 +13,7 @@ export const Dashboard = () => {
   const [postTitle, setPostTitle] = useState("");
   const [postContent, setPostContent] = useState("");
 
-  const { user, initialized, initUser, showModal, setShowModal, createPost } = useBlog();
-
-  // Static Data
- 
-  const posts = [];
-
-  /////////////////
+  const { user, initialized, initUser, showModal, setShowModal, createPost, posts } = useBlog();
 
   const onConnect = () => {
     setConnecting(true);
