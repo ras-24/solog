@@ -25,6 +25,7 @@ export const BlogProvider = ({ children }) => {
 
   const [user, setUser] = useState()
   const [initialized, setInitialized] = useState(false)
+  const [transactionPending, setTransactionPending] = useState(false)
 
   const anchorWallet = useAnchorWallet();
   const { connection } = useConnection();
@@ -42,26 +43,59 @@ export const BlogProvider = ({ children }) => {
       if (program && publicKey) {
         try {
           // Check if there is a user account
-          const [userPda] = await findProgramAddressSync([utf8.encode('user'), publicKey.toBuffer()], program.programId())
+          setTransactionPending(true)
+          const [userPda] = await findProgramAddressSync([utf8.encode('user'), publicKey.toBuffer()], program.programId)
           const user = await program.account.userAccount.fetch(userPda)
           if (user) {
             setInitialized(true) // Create Post
+            setUser(user)
           }
         } catch (err) {
           console.log("No User")
           setInitialized(false) // Initialize user
+        } finally {
+          setTransactionPending(false)
         }
       }
     }
 
     start()
-  }, [])
+  }, [program, publicKey])
+
+  const initUser = async () => {
+    if (program && publicKey) {
+      try {
+        setTransactionPending(true)
+        const name = getRandomName()
+        const avatar = getAvatarUrl(name)
+        const [userPda] = await findProgramAddressSync(
+          [utf8.encode("user"), publicKey.toBuffer()],
+          program.programId
+        );
+
+        await program.methods
+          .initUser(name, avatar)
+          .accounts({
+            userAccount: userPda,
+            authority: publicKey,
+            systemProgram: SystemProgram.programId
+          })
+          .rpc()
+        setInitialized(true)
+      } catch (err) {
+        console.log(err)
+      } finally {
+        setTransactionPending(false)
+      }
+    }
+  }
 
   return (
     <BlogContext.Provider
       value={{
         user,
-        initialized
+        initialized,
+        initUser,
       }}
     >
       {children}

@@ -13,7 +13,7 @@ export const Dashboard = () => {
   const [postTitle, setPostTitle] = useState("");
   const [postContent, setPostContent] = useState("");
 
-  const { user, initialized } = useBlog();
+  const { user, initialized, initUser } = useBlog();
 
   // Static Data
  
@@ -72,7 +72,7 @@ export const Dashboard = () => {
                 <Button
                   className="ml-3 mr-2"
                   onClick={() => {
-                    setShowModal(true);
+                    initUser()
                   }}
                 >
                   Initialize User
