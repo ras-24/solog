@@ -15,11 +15,10 @@ export const Dashboard = () => {
   const [postTitle, setPostTitle] = useState("")
   const [postContent, setPostContent] = useState("")
 
+  const { user } = useBlog()
+
   // Static Data
-  const user = {
-    name: "Random Robot",
-    avatar: "https://avatarfiles.alphacoders.com/283/thumb-283778.jpg",
-  }
+
   // const connected = false
   const posts = []
 
